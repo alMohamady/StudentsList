@@ -18,12 +18,18 @@ class StudentsState extends State<StudentsList>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Students"),
-      ),
-      body: getStudentsList(),
+        appBar: AppBar(
+          title: Text("Students"),
+        ),
+        body: getStudentsList(),
 
-
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            debugPrint("Floating has been clicked");
+          },
+          tooltip: 'Add Student',
+          child: Icon(Icons.add),
+        )
     );
   }
 
