@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:students_list/screens/student_detil.dart';
 
 
 class StudentsList extends StatefulWidget{
@@ -25,7 +26,7 @@ class StudentsState extends State<StudentsList>{
 
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            debugPrint("Floating has been clicked");
+            navigateToStudent("Add New Student");
           },
           tooltip: 'Add Student',
           child: Icon(Icons.add),
@@ -50,12 +51,18 @@ class StudentsState extends State<StudentsList>{
               subtitle: Text("data form this Student"),
               trailing: Icon(Icons.delete, color: Colors.grey,),
               onTap: (){
-                debugPrint("Student Tabed");
+                navigateToStudent("Edit Student");
               },
             ),
 
           );
 
         });
+  }
+
+  void navigateToStudent(String appTitle){
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return StudentDetail(appTitle);
+    }));
   }
 }
