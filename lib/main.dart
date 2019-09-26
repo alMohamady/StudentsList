@@ -4,10 +4,7 @@ import 'dart:async';
 
 
 void main() {
-  //runApp(MyApp());
-  print ("Start the Application");
-  getFileContent();
-  print ("End the Application");
+  runApp(MyApp());
 }
 
 /*getFileContent() async{
