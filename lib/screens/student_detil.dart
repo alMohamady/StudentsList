@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
+import 'package:students_list/models/student.dart';
+import 'package:students_list/utilities/sql_helper.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:students_list/screens/students_list.dart';
 
 class StudentDetail extends StatefulWidget{
 

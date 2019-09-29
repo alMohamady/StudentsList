@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:students_list/screens/student_detil.dart';
-
+import 'dart:async';
+import 'package:students_list/models/student.dart';
+import 'package:students_list/utilities/sql_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class StudentsList extends StatefulWidget{
 
@@ -13,10 +16,18 @@ class StudentsList extends StatefulWidget{
 
 class StudentsState extends State<StudentsList>{
 
+  SQL_Helper helper = new SQL_Helper();
+  List<Student> studentsList;
   int count =0;
 
   @override
   Widget build(BuildContext context) {
+
+    if (studentsList == null) {
+      studentsList = new List<Student>();
+      updateListView();
+    }
+
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
@@ -27,6 +38,7 @@ class StudentsState extends State<StudentsList>{
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             navigateToStudent("Add New Student");
+            updateListView();
           },
           tooltip: 'Add Student',
           child: Icon(Icons.add),
@@ -44,12 +56,19 @@ class StudentsState extends State<StudentsList>{
             elevation: 2.0,
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: Colors.amber,
-                child: Icon(Icons.check),
+                backgroundColor: isPassed(this.studentsList[position].pass),
+                child: getIcon(this.studentsList[position].pass),
               ),
-              title: Text("The first student"),
-              subtitle: Text("data form this Student"),
-              trailing: Icon(Icons.delete, color: Colors.grey,),
+              title: Text(this.studentsList[position].name),
+              subtitle: Text(this.studentsList[position].description + " | " + this.studentsList[position].date),
+              trailing:
+               GestureDetector(
+                 child: Icon(Icons.delete, color: Colors.grey,),
+                 onTap: () {
+                   _delete(context, this.studentsList[position]);
+                 },
+               )
+              ,
               onTap: (){
                 navigateToStudent("Edit Student");
               },
@@ -58,6 +77,63 @@ class StudentsState extends State<StudentsList>{
           );
 
         });
+  }
+
+  Color isPassed(int value) {
+    switch (value) {
+      case 1:
+        return Colors.amber;
+        break;
+      case 2:
+        return Colors.red;
+        break;
+      default:
+        return Colors.amber;
+    }
+  }
+
+  Icon getIcon(int value) {
+    switch (value) {
+      case 1:
+        return Icon(Icons.check);
+        break;
+      case 2:
+        return Icon(Icons.close);
+        break;
+      default:
+        return Icon(Icons.check);
+    }
+  }
+
+  void _delete(BuildContext context, Student student) async {
+         int ressult = await helper.deleteStudent(student.id);
+         if (ressult != 0){
+           _showSenckBar(context, "Student has been deleted");
+           updateListView();
+         }
+  }
+
+  void _showSenckBar(BuildContext context, String msg) {
+    final snackBar = SnackBar(content: Text(msg),);
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  void updateListView(){
+
+    final Future<Database> db = helper.initializedDatabase();
+    db.then((database){
+
+      Future<List<Student>> students = helper.getStudentList();
+      students.then((theList) {
+        setState(() {
+          this.studentsList = theList;
+          this.count = theList.length;
+        });
+      } );
+
+    });
+
+
   }
 
   void navigateToStudent(String appTitle){

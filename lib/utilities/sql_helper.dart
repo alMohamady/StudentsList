@@ -85,5 +85,18 @@ class SQL_Helper {
     int result = Sqflite.firstIntValue(all);
     return result;
   }
+  
+  Future<List<Student>> getStudentList() async{ 
+    
+    var studentMapList = await getStudentMapList();
+    int count = studentMapList.length;
+    
+    List<Student> students = new List<Student>();
+    
+    for (int i =0; i <= count; i++){
+      students.add(Student.getMap(studentMapList[i]));
+    }
 
+    return students;
+  }
 }
