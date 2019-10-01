@@ -36,7 +36,7 @@ class StudentsState extends State<StudentsList> {
 
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            navigateToStudent(Student('', '', 0, ''), "Add New Student");
+            navigateToStudent(Student('', '', 1, ''), "Add New Student");
           },
           tooltip: 'Add Student',
           child: Icon(Icons.add),

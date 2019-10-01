@@ -93,7 +93,7 @@ class SQL_Helper {
     
     List<Student> students = new List<Student>();
     
-    for (int i =0; i <= count; i++){
+    for (int i = 0; i <= count -1; i++){
       students.add(Student.getMap(studentMapList[i]));
     }
 
