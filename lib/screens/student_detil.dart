@@ -8,33 +8,40 @@ import 'package:students_list/screens/students_list.dart';
 class StudentDetail extends StatefulWidget{
 
   String screenTitle;
+  Student student;
 
-  StudentDetail(this.screenTitle);
+  StudentDetail(this.student ,  this.screenTitle);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return Students(screenTitle);
+    return Students(this.student, screenTitle);
   }
 }
 
 class Students extends State<StudentDetail> {
 
+  static var _status = ["successed", "failed"];
   String screenTitle;
+  Student student;
+  SQL_Helper helper = new SQL_Helper();
 
-  Students(this.screenTitle);
+  Students(this.student ,this.screenTitle);
 
-  static var _status = {"successed", "failed"};
 
   TextEditingController studentName = new TextEditingController();
   TextEditingController studentDetail = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+
     TextStyle textStyle = Theme
         .of(context)
         .textTheme
         .title;
+
+    studentName.text = student.name;
+    studentDetail.text = student.description;
 
     // TODO: implement build
     return
@@ -66,10 +73,10 @@ class Students extends State<StudentDetail> {
                         );
                       }).toList(),
                       style: textStyle,
-                      value: 'successed',
+                      value: getPassing(student.pass),
                       onChanged: (selectedItem) {
                         setState(() {
-                          debugPrint("User Select $selectedItem");
+                          setPassing(selectedItem);
                         });
                       },
                     ),
@@ -81,7 +88,7 @@ class Students extends State<StudentDetail> {
                       controller: studentName,
                       style: textStyle,
                       onChanged: (value) {
-                        debugPrint("User Edit the Name");
+                        student.name = value;
                       },
                       decoration: InputDecoration(
                           labelText: "Name :",
@@ -99,7 +106,7 @@ class Students extends State<StudentDetail> {
                       controller: studentDetail,
                       style: textStyle,
                       onChanged: (value) {
-                        debugPrint("User Edit the Description");
+                        student.description = value;
                       },
                       decoration: InputDecoration(
                           labelText: "Description :",
@@ -176,5 +183,29 @@ class Students extends State<StudentDetail> {
 
   void goBack() {
     Navigator.pop(context);
+  }
+
+  void setPassing(String value) {
+    switch(value) {
+      case "successed":
+        student.pass = 1;
+        break;
+      case "failed":
+        student.pass = 2;
+        break;
+    }
+  }
+
+  String getPassing(int value) {
+    String pass;
+    switch(value){
+      case 1:
+        pass = _status[0];
+        break;
+      case 2:
+        pass = _status[1];
+        break;
+    }
+   return pass;
   }
 }

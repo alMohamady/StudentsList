@@ -22,7 +22,6 @@ class StudentsState extends State<StudentsList>{
 
   @override
   Widget build(BuildContext context) {
-
     if (studentsList == null) {
       studentsList = new List<Student>();
       updateListView();
@@ -37,7 +36,7 @@ class StudentsState extends State<StudentsList>{
 
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            navigateToStudent("Add New Student");
+            navigateToStudent(Student('', '', 0, ''), "Add New Student");
             updateListView();
           },
           tooltip: 'Add Student',
@@ -70,7 +69,7 @@ class StudentsState extends State<StudentsList>{
                )
               ,
               onTap: (){
-                navigateToStudent("Edit Student");
+                navigateToStudent(this.studentsList[position],"Edit Student");
               },
             ),
 
@@ -136,9 +135,9 @@ class StudentsState extends State<StudentsList>{
 
   }
 
-  void navigateToStudent(String appTitle){
+  void navigateToStudent(Student student, String appTitle){
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return StudentDetail(appTitle);
+      return StudentDetail(student ,appTitle);
     }));
   }
 }
