@@ -14,11 +14,11 @@ class StudentsList extends StatefulWidget{
   }
 }
 
-class StudentsState extends State<StudentsList>{
+class StudentsState extends State<StudentsList> {
 
   SQL_Helper helper = new SQL_Helper();
   List<Student> studentsList;
-  int count =0;
+  int count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class StudentsState extends State<StudentsList>{
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             navigateToStudent(Student('', '', 0, ''), "Add New Student");
-            updateListView();
           },
           tooltip: 'Add Student',
           child: Icon(Icons.add),
@@ -45,12 +44,11 @@ class StudentsState extends State<StudentsList>{
     );
   }
 
-  ListView getStudentsList(){
-
+  ListView getStudentsList() {
     return ListView.builder(
         itemCount: count,
-        itemBuilder: (BuildContext context, int position){
-          return Card (
+        itemBuilder: (BuildContext context, int position) {
+          return Card(
             color: Colors.white,
             elevation: 2.0,
             child: ListTile(
@@ -59,22 +57,22 @@ class StudentsState extends State<StudentsList>{
                 child: getIcon(this.studentsList[position].pass),
               ),
               title: Text(this.studentsList[position].name),
-              subtitle: Text(this.studentsList[position].description + " | " + this.studentsList[position].date),
+              subtitle: Text(this.studentsList[position].description + " | " +
+                  this.studentsList[position].date),
               trailing:
-               GestureDetector(
-                 child: Icon(Icons.delete, color: Colors.grey,),
-                 onTap: () {
-                   _delete(context, this.studentsList[position]);
-                 },
-               )
+              GestureDetector(
+                child: Icon(Icons.delete, color: Colors.grey,),
+                onTap: () {
+                  _delete(context, this.studentsList[position]);
+                },
+              )
               ,
-              onTap: (){
-                navigateToStudent(this.studentsList[position],"Edit Student");
+              onTap: () {
+                navigateToStudent(this.studentsList[position], "Edit Student");
               },
             ),
 
           );
-
         });
   }
 
@@ -105,11 +103,11 @@ class StudentsState extends State<StudentsList>{
   }
 
   void _delete(BuildContext context, Student student) async {
-         int ressult = await helper.deleteStudent(student.id);
-         if (ressult != 0){
-           _showSenckBar(context, "Student has been deleted");
-           updateListView();
-         }
+    int ressult = await helper.deleteStudent(student.id);
+    if (ressult != 0) {
+      _showSenckBar(context, "Student has been deleted");
+      updateListView();
+    }
   }
 
   void _showSenckBar(BuildContext context, String msg) {
@@ -117,27 +115,27 @@ class StudentsState extends State<StudentsList>{
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
-  void updateListView(){
-
+  void updateListView() {
     final Future<Database> db = helper.initializedDatabase();
-    db.then((database){
-
+    db.then((database) {
       Future<List<Student>> students = helper.getStudentList();
       students.then((theList) {
         setState(() {
           this.studentsList = theList;
           this.count = theList.length;
         });
-      } );
-
+      });
     });
-
-
   }
 
-  void navigateToStudent(Student student, String appTitle){
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return StudentDetail(student ,appTitle);
+  void navigateToStudent(Student student, String appTitle) async {
+    bool result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) {
+      return StudentDetail(student, appTitle);
     }));
+
+    if (result) {
+      updateListView();
+    }
   }
 }

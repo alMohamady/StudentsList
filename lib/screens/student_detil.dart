@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:students_list/models/student.dart';
 import 'package:students_list/utilities/sql_helper.dart';
@@ -28,13 +29,11 @@ class Students extends State<StudentDetail> {
 
   Students(this.student ,this.screenTitle);
 
-
   TextEditingController studentName = new TextEditingController();
   TextEditingController studentDetail = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     TextStyle textStyle = Theme
         .of(context)
         .textTheme
@@ -46,10 +45,11 @@ class Students extends State<StudentDetail> {
     // TODO: implement build
     return
       WillPopScope(
-        onWillPop: () {
-          debugPrint("WillPopScope Button");
-          goBack();
+          onWillPop: () {
+            debugPrint("WillPopScope Button");
+            goBack();
           },
+
           child: Scaffold(
             appBar: AppBar(
               title: Text(screenTitle),
@@ -60,6 +60,7 @@ class Students extends State<StudentDetail> {
                 },
               ),
             ),
+
             body: Padding(
               padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
               child: ListView(
@@ -136,10 +137,10 @@ class Students extends State<StudentDetail> {
                             onPressed: () {
                               setState(() {
                                 debugPrint("User Click SAVED");
+                                _save();
                               });
                             },
                           ),
-
                         ),
 
                         Container(width: 5.0,),
@@ -152,37 +153,30 @@ class Students extends State<StudentDetail> {
                             textColor: Theme
                                 .of(context)
                                 .primaryColorLight,
-                            child: Text(
+                            child:
+                            Text(
                               'Delete', textScaleFactor: 1.5,
                             ),
                             onPressed: () {
                               setState(() {
                                 debugPrint("User Click Delete");
+                                _delete();
                               });
                             },
                           ),
-
                         ),
                       ],
-
-
-                    )
-                    ,
-
-
+                    ),
                   )
-
-
                 ],
               ),
             ),
-
-
-          ));
+          )
+      );
   }
 
   void goBack() {
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   void setPassing(String value) {
@@ -208,4 +202,50 @@ class Students extends State<StudentDetail> {
     }
    return pass;
   }
+
+  void _save() async {
+
+    goBack();
+
+    student.date = DateFormat.yMMMd().format(DateTime.now());
+
+    int result;
+    if (student.id == null) {
+      result =  await helper.insertStudent(student);
+    } else {
+      result = await helper.updateStudent(student);
+    }
+
+    if (result == 0) {
+      showAlertDialog('Sorry', "Student not saved");
+    } else {
+      showAlertDialog('Congratulations', 'Student has been saved successfully');
+    }
+  }
+
+  void showAlertDialog(String title, String msg){
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(title),
+      content: Text(msg),
+    );
+    showDialog(context: context, builder: (_) => alertDialog);
+  }
+
+  void _delete() async {
+    goBack();
+
+    if (student.id == null){
+      showAlertDialog('Ok Delete', "No student was deleted");
+      return;
+    }
+
+    int result = await helper.deleteStudent(student.id);
+    if (result == 0) {
+      showAlertDialog('Ok Delete', "No student was deleted");
+    } else {
+      showAlertDialog('Ok Delete', "Student has been deleted");
+    }
+
+  }
+
 }
